@@ -67,13 +67,6 @@ body{
 .black{background:#111827}
 .sky{background:#0ea5e9}
 
-/* ✅ NEW AD (HIDDEN INITIALLY) */
-#delayedAd{
-display:none;
-margin-top:20px;
-text-align:center;
-}
-
 .footer{
   text-align:center;
   font-size:13px;
@@ -129,6 +122,7 @@ text-align:center;
     <div class="badge gray">Social</div>
   </a>
 
+  <!-- NEW BUTTON -->
   <a href="https://igbiohub.com/" class="card">
     <div class="icon">📸</div>
     Instagram Bio
@@ -158,26 +152,20 @@ text-align:center;
 <div class="footer">
   Powered by <strong>ztera.pages.dev</strong>
 </div>
-
-<!-- ✅ NEW 5 SEC DELAY AD -->
-<div id="delayedAd">
+<!-- ✅ AD AT BOTTOM OF BODY -->
+<div class="bottom-ad">
   <script async data-cfasync="false"
     src="https://pl28453807.effectivegatecpm.com/e1b6987953b44b06af771c434831e631/invoke.js">
   </script>
   <div id="container-e1b6987953b44b06af771c434831e631"></div>
 </div>
-
 </div>
-
-<script>
-/* ⏱️ 5 SECOND DELAY */
-setTimeout(()=>{
-  const ad = document.getElementById("delayedAd");
-  if(ad){
-    ad.style.display = "block";
-  }
-},5000);
-</script>
-
+<!-- ✅ AD AT BOTTOM OF BODY -->
+<div class="bottom-ad">
+  <script async data-cfasync="false"
+    src="https://pl28453807.effectivegatecpm.com/e1b6987953b44b06af771c434831e631/invoke.js">
+  </script>
+  <div id="container-e1b6987953b44b06af771c434831e631"></div>
+</div>
 </body>
 </html>
