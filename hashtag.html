@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hashtag Generator</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); width: 90%; max-width: 450px; text-align: center; }
+        h2 { color: #1a73e8; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: #1a73e8; }
+        .btn-gen { background: #1a73e8; color: white; border: none; padding: 12px 20px; border-radius: 8px; margin-top: 15px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; }
+        .btn-gen:hover { background: #1557b0; }
+        #result-container { display: none; margin-top: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px dashed #1a73e8; }
+        #hashtag-display { font-size: 14px; color: #333; line-height: 1.6; text-align: left; margin-bottom: 15px; }
+        .btn-copy { background: #34a853; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; }
+        .btn-copy:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Hashtag Generator</h2>
+    <input type="text" id="keywordInput" placeholder="Ek keyword likhein (e.g. Travel, Gym, Food)...">
+    <button class="btn-gen" onclick="generateSmartHashtags()">Generate Hashtags</button>
+
+    <div id="result-container">
+        <div id="hashtag-display"></div>
+        <button class="btn-copy" onclick="copyHashtags()">Copy Hashtags</button>
+    </div>
+</div>
+
+<script>
+    // Ye hamara Database hai - Aap isme aur bhi categories add kar sakte hain
+    const hashtagLib = {
+        "travel": ["#travel", "#nature", "#photography", "#travelgram", "#explore", "#wanderlust", "#adventure", "#instatravel", "#travelphotography", "#landscape"],
+        "gym": ["#gym", "#fitness", "#workout", "#motivation", "#bodybuilding", "#fitnessmotivation", "#training", "#gymlife", "#lifestyle", "#health"],
+        "food": ["#food", "#foodie", "#instafood", "#foodphotography", "#yummy", "#delicious", "#foodstagram", "#foodblogger", "#healthyfood", "#dinner"],
+        "tech": ["#technology", "#tech", "#innovation", "#gadgets", "#iphone", "#programming", "#coding", "#software", "#digital", "#future"],
+        "fashion": ["#fashion", "#style", "#love", "#instagood", "#ootd", "#model", "#photooftheday", "#beauty", "#art", "#photography"],
+        "gaming": ["#gaming", "#gamer", "#ps5", "#xbox", "#pcgaming", "#pubg", "#freefire", "#streamer", "#games", "#playstation"]
+    };
+
+    function generateSmartHashtags() {
+        const input = document.getElementById('keywordInput').value.toLowerCase().trim();
+        const display = document.getElementById('hashtag-display');
+        const container = document.getElementById('result-container');
+
+        if (input === "") {
+            alert("Kripya ek keyword enter karein!");
+            return;
+        }
+
+        let foundTags = [];
+
+        // Database mein check karna
+        if (hashtagLib[input]) {
+            foundTags = hashtagLib[input];
+        } else {
+            // Agar keyword nahi milta toh default hashtags create karna
+            foundTags = [`#${input}`, `#${input}life`, `#${input}daily`, `#inst${input}`, `#${input}india`, `#${input}world` ];
+        }
+
+        display.innerText = foundTags.join(' ');
+        container.style.display = 'block';
+    }
+
+    function copyHashtags() {
+        const text = document.getElementById('hashtag-display').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const copyBtn = document.querySelector('.btn-copy');
+            copyBtn.innerText = "Copied! ✅";
+            copyBtn.style.background = "#0d652d";
+            
+            setTimeout(() => {
+                copyBtn.innerText = "Copy Hashtags";
+                copyBtn.style.background = "#34a853";
+            }, 2000);
+        });
+    }
+</script>
+<!-- ✅ AD AT BOTTOM OF BODY -->
+<div class="bottom-ad">
+  <script async data-cfasync="false"
+    src="https://pl28453807.effectivegatecpm.com/e1b6987953b44b06af771c434831e631/invoke.js">
+  </script>
+  <div id="container-e1b6987953b44b06af771c434831e631"></div>
+</div>
+</body>
+</html>
