@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Calculator – ZTERA</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Inter,system-ui;
+  background:#f4f6ff;
+}
+.header{
+  background:#ec4899;
+  color:#fff;
+  padding:14px;
+  text-align:center;
+  font-size:18px;
+  font-weight:600;
+}
+.container{
+  max-width:420px;
+  margin:16px auto;
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+}
+h2{text-align:center;color:#ec4899}
+
+.box{margin-bottom:18px}
+label{
+  font-weight:600;
+  display:block;
+  margin-bottom:6px;
+}
+input[type=text]{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  font-size:15px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border-radius:16px;
+  border:none;
+  background:#ec4899;
+  color:#fff;
+  font-size:16px;
+  font-weight:600;
+  margin-top:10px;
+}
+
+.chart-wrap{
+  position:relative;
+  width:240px;
+  height:240px;
+  margin:20px auto;
+}
+canvas{width:240px;height:240px}
+.center-text{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+}
+.center-text small{
+  color:#666;
+  font-size:13px;
+}
+.center-text strong{
+  font-size:26px;
+  color:#ec4899;
+}
+
+.legend{
+  display:flex;
+  justify-content:center;
+  font-size:14px;
+}
+.dot{
+  width:12px;height:12px;border-radius:50%;
+  display:inline-block;margin-right:6px;
+}
+
+.result{
+  background:#fdf2f8;
+  padding:16px;
+  border-radius:14px;
+  margin-top:20px;
+  text-align:center;
+  font-weight:600;
+}
+
+.footer{
+  text-align:center;
+  font-size:13px;
+  margin-top:14px;
+  color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">ZTERA Love Calculator ❤️</div>
+
+<div class="container">
+<h2>Check Your Love Percentage</h2>
+
+<div class="box">
+  <label>Your Name</label>
+  <input type="text" id="name1" placeholder="Enter your name">
+</div>
+
+<div class="box">
+  <label>Partner Name</label>
+  <input type="text" id="name2" placeholder="Enter partner name">
+</div>
+
+<button onclick="calculateLove()">Calculate Love</button>
+
+<!-- Donut -->
+<div class="chart-wrap">
+  <canvas id="donut"></canvas>
+  <div class="center-text">
+    <small>Love Score</small><br>
+    <strong><span id="percent">0</span>%</strong>
+  </div>
+</div>
+
+<div class="legend">
+  <div><span class="dot" style="background:#ec4899"></span>Love</div>
+</div>
+
+<div class="result" id="message">
+  Enter names and click calculate ❤️
+</div>
+
+<div class="footer">Powered by <strong>desisavar.pages.dev</strong></div>
+</div>
+
+<script>
+const canvas=document.getElementById("donut");
+const ctx=canvas.getContext("2d");
+canvas.width=canvas.height=240;
+let currentAngle=0;
+
+function easeOut(t){return 1-Math.pow(1-t,3);}
+
+function animateDonut(target){
+  let start=currentAngle,startTime=null;
+  function anim(ts){
+    if(!startTime) startTime=ts;
+    let p=Math.min((ts-startTime)/700,1);
+    let a=start+(target-start)*easeOut(p);
+    draw(a);
+    if(p<1) requestAnimationFrame(anim);
+    else currentAngle=target;
+  }
+  requestAnimationFrame(anim);
+}
+
+function draw(angle){
+  ctx.clearRect(0,0,240,240);
+  const c=120,r=90,s=-0.5*Math.PI;
+
+  ctx.lineWidth=22;
+  ctx.strokeStyle="#fbcfe8";
+  ctx.beginPath();
+  ctx.arc(c,c,r,0,2*Math.PI);
+  ctx.stroke();
+
+  ctx.strokeStyle="#ec4899";
+  ctx.beginPath();
+  ctx.arc(c,c,r,s,s+angle);
+  ctx.stroke();
+}
+
+function hash(str){
+  let h=0;
+  for(let i=0;i<str.length;i++){
+    h=str.charCodeAt(i)+((h<<5)-h);
+  }
+  return Math.abs(h);
+}
+
+function calculateLove(){
+  const n1=document.getElementById("name1").value.trim();
+  const n2=document.getElementById("name2").value.trim();
+  if(!n1 || !n2) return;
+
+  let score=(hash(n1+n2)%51)+50; // 50–100 fun range
+  document.getElementById("percent").innerText=score;
+
+  let msg="Good match 💖";
+  if(score>85) msg="Perfect couple 💍❤️";
+  else if(score>70) msg="Strong love 💕";
+  else if(score>60) msg="Nice bonding 😊";
+
+  document.getElementById("message").innerText=msg;
+
+  let angle=(score/100)*2*Math.PI;
+  animateDonut(angle);
+}
+
+draw(0);
+</script>
+<!-- ✅ AD AT BOTTOM OF BODY -->
+<div class="bottom-ad">
+  <script async data-cfasync="false"
+    src="https://pl28453807.effectivegatecpm.com/e1b6987953b44b06af771c434831e631/invoke.js">
+  </script>
+  <div id="container-e1b6987953b44b06af771c434831e631"></div>
+</div>
+</body>
+</html>
