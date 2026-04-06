@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FD Calculator – Desisavar</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Inter,system-ui;
+  background:#f4f6ff;
+}
+.header{
+  background:#3248f5;
+  color:#fff;
+  padding:14px;
+  text-align:center;
+  font-size:18px;
+  font-weight:600;
+}
+.container{
+  max-width:420px;
+  margin:16px auto;
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+}
+h2{
+  text-align:center;
+  color:#3248f5;
+}
+.box{margin-bottom:22px}
+.label{
+  display:flex;
+  justify-content:space-between;
+  font-weight:600;
+  margin-bottom:6px;
+}
+.value{color:#16a34a}
+input[type=range]{width:100%}
+
+.chart-wrap{
+  position:relative;
+  width:240px;
+  height:240px;
+  margin:20px auto;
+}
+canvas{
+  width:240px;
+  height:240px;
+}
+.center-text{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+}
+.center-text small{
+  color:#666;
+  font-size:13px;
+}
+.center-text strong{
+  font-size:20px;
+  color:#111;
+}
+
+.legend{
+  display:flex;
+  justify-content:space-around;
+  font-size:14px;
+}
+.dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  display:inline-block;
+  margin-right:6px;
+}
+
+.result{
+  background:#eef2ff;
+  padding:16px;
+  border-radius:14px;
+  margin-top:20px;
+}
+.result div{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.total{
+  font-weight:700;
+  font-size:18px;
+}
+
+.footer{
+  text-align:center;
+  font-size:13px;
+  margin-top:14px;
+  color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Desisavar FD Calculator</div>
+
+<div class="container">
+<h2>Calculate FD Returns</h2>
+
+<!-- Principal -->
+<div class="box">
+  <div class="label">
+    <span>Deposit Amount</span>
+    <span class="value">₹ <span id="amountVal">500000</span></span>
+  </div>
+  <input type="range" min="10000" max="10000000" step="10000" value="500000" id="amount">
+</div>
+
+<!-- Interest -->
+<div class="box">
+  <div class="label">
+    <span>Interest Rate (p.a)</span>
+    <span class="value"><span id="rateVal">6.5</span>%</span>
+  </div>
+  <input type="range" min="3" max="10" step="0.1" value="6.5" id="rate">
+</div>
+
+<!-- Time -->
+<div class="box">
+  <div class="label">
+    <span>Time Period</span>
+    <span class="value"><span id="timeVal">5</span> Yr</span>
+  </div>
+  <input type="range" min="1" max="20" value="5" id="time">
+</div>
+
+<!-- Donut -->
+<div class="chart-wrap">
+  <canvas id="donut"></canvas>
+  <div class="center-text">
+    <small>Maturity Value</small><br>
+    <strong>₹ <span id="centerTotal">0</span></strong>
+  </div>
+</div>
+
+<div class="legend">
+  <div><span class="dot" style="background:#c7d2fe"></span>Principal</div>
+  <div><span class="dot" style="background:#4f46e5"></span>Interest</div>
+</div>
+
+<!-- Result -->
+<div class="result">
+  <div><span>Principal Amount</span><span>₹ <span id="principal">0</span></span></div>
+  <div><span>Total Interest</span><span>₹ <span id="interest">0</span></span></div>
+  <div class="total"><span>Maturity Value</span><span>₹ <span id="total">0</span></span></div>
+</div>
+
+<div class="footer">Powered by <strong>desisavar.pages.dev</strong></div>
+</div>
+
+<script>
+const amount=document.getElementById("amount");
+const rate=document.getElementById("rate");
+const time=document.getElementById("time");
+const canvas=document.getElementById("donut");
+const ctx=canvas.getContext("2d");
+
+canvas.width=canvas.height=240;
+let currentAngle=0;
+
+function easeOut(t){return 1-Math.pow(1-t,3);}
+
+function animateDonut(target){
+  let start=currentAngle,startTime=null;
+  function anim(ts){
+    if(!startTime) startTime=ts;
+    let p=Math.min((ts-startTime)/600,1);
+    let a=start+(target-start)*easeOut(p);
+    draw(a);
+    if(p<1) requestAnimationFrame(anim);
+    else currentAngle=target;
+  }
+  requestAnimationFrame(anim);
+}
+
+function draw(angle){
+  ctx.clearRect(0,0,240,240);
+  const c=120,r=90,s=-0.5*Math.PI;
+
+  ctx.lineWidth=22;
+  ctx.strokeStyle="#e5e7eb";
+  ctx.beginPath();
+  ctx.arc(c,c,r,0,2*Math.PI);
+  ctx.stroke();
+
+  ctx.strokeStyle="#c7d2fe";
+  ctx.beginPath();
+  ctx.arc(c,c,r,s,s+angle);
+  ctx.stroke();
+
+  ctx.strokeStyle="#4f46e5";
+  ctx.beginPath();
+  ctx.arc(c,c,r,s+angle,s+2*Math.PI);
+  ctx.stroke();
+}
+
+function calculateFD(){
+  let P=+amount.value;
+  let r=(+rate.value/100);
+  let n=+time.value;
+
+  let maturity=P*Math.pow(1+r,n);
+  let interest=maturity-P;
+
+  amountVal.innerText=P.toLocaleString();
+  rateVal.innerText=rate.value;
+  timeVal.innerText=time.value;
+
+  principal.innerText=P.toLocaleString();
+  interest=Math.round(interest);
+  total.innerText=Math.round(maturity).toLocaleString();
+  document.getElementById("interest").innerText=interest.toLocaleString();
+  centerTotal.innerText=Math.round(maturity).toLocaleString();
+
+  let angle=(P/maturity)*2*Math.PI;
+  animateDonut(angle);
+}
+
+amount.oninput=rate.oninput=time.oninput=calculateFD;
+calculateFD();
+</script>
+
+</body>
+</html>
