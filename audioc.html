@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Video Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text-main);
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { 
+            background: var(--card); 
+            width: 100%;
+            max-width: 420px;
+            padding: 32px; 
+            border-radius: 28px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            text-align: center; 
+        }
+
+        h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        p { color: var(--text-sub); font-size: 14px; margin-bottom: 32px; }
+
+        /* Fix for the Upload Section */
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--border);
+            padding: 40px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background: #fafafa;
+            margin-bottom: 24px;
+            gap: 16px; /* Icon aur text ke beech fix gap */
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: #f5f3ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            display: block;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        #fileName {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-sub);
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        input[type="file"] { display: none; }
+
+        /* Button Styling */
+        .btn { 
+            background-color: var(--primary); 
+            color: white; 
+            border: none; 
+            width: 100%;
+            padding: 16px; 
+            border-radius: 16px; 
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer; 
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn:hover { 
+            background-color: var(--primary-dark);
+            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn:active { transform: scale(0.98); }
+
+        .btn:disabled { 
+            background-color: #cbd5e1; 
+            box-shadow: none;
+            cursor: not-allowed; 
+        }
+
+        /* Status & Results */
+        #status { margin-top: 16px; font-size: 13px; color: var(--primary); font-weight: 500; }
+
+        .download-box {
+            margin-top: 24px;
+            padding: 16px;
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            border-radius: 16px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .download-link {
+            color: #059669;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Video to Audio Converter</h2>
+    <p>Apni video ko high-quality MP3/WAV mein badlein</p>
+    
+    <label for="videoInput" class="upload-area" id="dropZone">
+        <span class="upload-icon">📂</span>
+        <span id="fileName">Video file select karein</span>
+        <input type="file" id="videoInput" accept="video/*">
+    </label>
+
+    <button id="convertBtn" class="btn">
+        <div class="spinner" id="loader"></div>
+        <span id="btnText">Convert Now</span>
+    </button>
+
+    <div id="status"></div>
+    
+    <div id="downloadBox" class="download-box">
+        <div style="margin-bottom: 8px;">✨ Conversion Complete!</div>
+        <a id="finalLink" class="download-link" href="#" download="converted_audio.wav">📥 Download Now</a>
+    </div>
+</div>
+
+<script>
+    const videoInput = document.getElementById('videoInput');
+    const convertBtn = document.getElementById('convertBtn');
+    const status = document.getElementById('status');
+    const downloadBox = document.getElementById('downloadBox');
+    const finalLink = document.getElementById('finalLink');
+    const fileNameDisplay = document.getElementById('fileName');
+    const loader = document.getElementById('loader');
+    const btnText = document.getElementById('btnText');
+
+    videoInput.addEventListener('change', (e) => {
+        if(e.target.files[0]) {
+            fileNameDisplay.innerText = e.target.files[0].name;
+            fileNameDisplay.style.color = "#1e293b";
+        }
+    });
+
+    convertBtn.addEventListener('click', async () => {
+        const file = videoInput.files[0];
+        if (!file) {
+            alert("Pehle video select karein!");
+            return;
+        }
+
+        status.innerText = "Processing audio... Kripya intezar karein.";
+        loader.style.display = "block";
+        btnText.innerText = "Converting...";
+        convertBtn.disabled = true;
+        downloadBox.style.display = "none";
+
+        const reader = new FileReader();
+        reader.onload = async function() {
+            try {
+                const arrayBuffer = reader.result;
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const decodedData = await audioCtx.decodeAudioData(arrayBuffer);
+                const wavBlob = bufferToWave(decodedData, decodedData.length);
+                const url = URL.createObjectURL(wavBlob);
+
+                finalLink.href = url;
+                downloadBox.style.display = "block";
+                status.innerText = "";
+            } catch (error) {
+                status.innerText = "Error: File process nahi ho saki.";
+                console.error(error);
+            }
+            loader.style.display = "none";
+            btnText.innerText = "Convert Now";
+            convertBtn.disabled = false;
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    function bufferToWave(abuffer, len) {
+        let numOfChan = abuffer.numberOfChannels,
+            length = len * numOfChan * 2 + 44,
+            buffer = new ArrayBuffer(length),
+            view = new DataView(buffer),
+            channels = [], i, sample, offset = 0, pos = 0;
+
+        function setUint16(data) { view.setUint16(pos, data, true); pos += 2; }
+        function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
+
+        setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157);
+        setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
+        setUint32(abuffer.sampleRate); setUint32(abuffer.sampleRate * 2 * numOfChan);
+        setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164);
+        setUint32(length - pos - 4);
+
+        for(i = 0; i < abuffer.numberOfChannels; i++) channels.push(abuffer.getChannelData(i));
+        while(pos < length) {
+            for(i = 0; i < numOfChan; i++) {
+                sample = Math.max(-1, Math.min(1, channels[i][offset]));
+                sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+                view.setInt16(pos, sample, true);
+                pos += 2;
+            }
+            offset++;
+        }
+        return new Blob([buffer], {type: "audio/wav"});
+    }
+</script>
+
+</body>
+</html>
