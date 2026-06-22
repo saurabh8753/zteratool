@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TextRepeater — Repeat Text Instantly</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-light: #eef2ff;
+    --text: #0f172a;
+    --text-soft: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --whatsapp: #25D366;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Navbar ===== */
+  nav {
+    background: rgba(255,255,255,.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .logo {
+    font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--primary), #7c3aed);
+    display: grid; place-items: center; color: #fff; font-weight: 700;
+  }
+  .logo span { color: var(--primary); }
+  nav ul { list-style: none; display: flex; gap: 30px; align-items: center; }
+  nav a { text-decoration: none; color: var(--text-soft); font-weight: 500; font-size: .95rem; transition: .2s; }
+  nav a:hover { color: var(--primary); }
+  .nav-cta {
+    background: var(--primary); color: #fff !important;
+    padding: 9px 18px; border-radius: 9px; font-weight: 600;
+  }
+  .nav-cta:hover { background: var(--primary-dark); }
+
+  /* ===== Hero ===== */
+  .hero { text-align: center; padding: 70px 20px 30px; }
+  .badge {
+    display: inline-block; background: var(--primary-light); color: var(--primary);
+    padding: 6px 16px; border-radius: 30px; font-size: .8rem; font-weight: 600;
+    margin-bottom: 18px; letter-spacing: .3px;
+  }
+  .hero h1 {
+    font-size: 2.8rem; font-weight: 800; letter-spacing: -1.5px;
+    background: linear-gradient(135deg, #0f172a, #4f46e5);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 14px;
+  }
+  .hero p { color: var(--text-soft); font-size: 1.1rem; max-width: 540px; margin: 0 auto; }
+
+  /* ===== Card ===== */
+  .container { max-width: 720px; margin: 0 auto 80px; padding: 0 20px; }
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px -12px rgba(79,70,229,.15);
+    padding: 36px;
+  }
+  .field-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-weight: 600; margin: 22px 0 8px; font-size: .9rem; color: var(--text);
+  }
+  .field-label:first-of-type { margin-top: 0; }
+  .counter { font-weight: 500; color: var(--text-soft); font-size: .8rem; }
+
+  textarea, input[type="number"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+    resize: vertical;
+    transition: border .2s, box-shadow .2s;
+  }
+  textarea::placeholder { color: #94a3b8; }
+  textarea:focus, input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(79,70,229,.12);
+  }
+  textarea { min-height: 120px; }
+
+  /* ===== Options as pills ===== */
+  .options { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+  .pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border: 1.5px solid var(--border); border-radius: 12px;
+    cursor: pointer; font-size: .9rem; font-weight: 500; transition: .2s;
+    user-select: none;
+  }
+  .pill:hover { border-color: var(--primary); }
+  .pill input { accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; }
+  .pill:has(input:checked) { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+
+  /* ===== Buttons ===== */
+  .btn {
+    color: #fff; border: none; padding: 14px 24px; border-radius: 12px;
+    font-size: 1rem; font-weight: 600; font-family: inherit; cursor: pointer;
+    transition: transform .12s, box-shadow .2s, background .2s;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), #6d28d9);
+    width: 100%; margin-top: 26px; font-size: 1.05rem; padding: 16px;
+    box-shadow: 0 8px 24px -6px rgba(79,70,229,.5);
+  }
+  .btn-primary:hover { box-shadow: 0 10px 30px -6px rgba(79,70,229,.65); }
+
+  .actions { display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+  .actions .btn { flex: 1; min-width: 150px; }
+
+  .btn-copy { background: #1e293b; }
+  .btn-copy:hover { background: #0f172a; }
+  .btn-whatsapp { background: var(--whatsapp); }
+  .btn-whatsapp:hover { background: #1ebe5b; }
+  .btn svg { width: 19px; height: 19px; fill: currentColor; }
+
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #0f172a; color: #fff; padding: 13px 22px; border-radius: 12px;
+    font-weight: 500; font-size: .9rem; box-shadow: 0 8px 30px rgba(0,0,0,.25);
+    opacity: 0; pointer-events: none; transition: .3s; z-index: 100;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ===== Footer ===== */
+  footer {
+    text-align: center; padding: 32px; color: var(--text-soft); font-size: .9rem;
+    border-top: 1px solid var(--border); background: #fff;
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 14px 20px; }
+    nav ul { gap: 16px; }
+    nav li:not(:last-child) { display: none; }
+    .hero h1 { font-size: 2.1rem; }
+    .card { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">
+      <div class="logo-icon">T</div>
+      Text<span>Repeater</span>
+    </div>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Tools</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#" class="nav-cta">Get Started</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <span class="badge">⚡ Fast • Free • No Sign-up</span>
+    <h1>Repeat Text Instantly</h1>
+    <p>The easiest way to duplicate any text multiple times. Customize, copy, and share in one click.</p>
+  </section>
+
+  <div class="container">
+    <div class="card">
+      <div class="field-label">
+        <span>Enter your text</span>
+        <span class="counter" id="charCount">0 characters</span>
+      </div>
+      <textarea id="inputText" placeholder="Type or paste your text here..." oninput="updateCount()"></textarea>
+
+      <div class="field-label"><span>Number of times to repeat</span></div>
+      <input type="number" id="count" value="5" min="1" max="10000">
+
+      <div class="options">
+        <label class="pill"><input type="checkbox" id="newLine"> New line</label>
+        <label class="pill"><input type="checkbox" id="separator"> Separator ( — )</label>
+        <label class="pill"><input type="checkbox" id="numbered"> Numbered list</label>
+      </div>
+
+      <button class="btn btn-primary" onclick="repeatText()">
+        <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"></path></svg>
+        Repeat Text
+      </button>
+
+      <div class="field-label" style="margin-top:28px;"><span>Result</span></div>
+      <textarea id="outputText" placeholder="Repeated text will appear here..." readonly></textarea>
+
+      <div class="actions">
+        <button class="btn btn-copy" onclick="copyText()">
+          <svg viewBox="0 0 24 24"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"></path></svg>
+          Copy
+        </button>
+        <button class="btn btn-whatsapp" onclick="shareWhatsApp()">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
+          WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer>· Built with ZTERA ❤️ </footer>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+  function updateCount() {
+    const len = document.getElementById('inputText').value.length;
+    document.getElementById('charCount').textContent = len + ' character' + (len === 1 ? '' : 's');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function repeatText() {
+    const text = document.getElementById('inputText').value;
+    const count = parseInt(document.getElementById('count').value) || 0;
+    const newLine = document.getElementById('newLine').checked;
+    const separator = document.getElementById('separator').checked;
+    const numbered = document.getElementById('numbered').checked;
+
+    if (!text.trim()) { showToast('⚠️ Please enter some text first'); return; }
+    if (count < 1) { showToast('⚠️ Enter a valid number'); return; }
+
+    let result = '';
+    for (let i = 1; i <= count; i++) {
+      let line = numbered ? `${i}. ${text}` : text;
+      result += line;
+      if (separator) result += ' — ';
+      if (newLine && i < count) result += '\n';
+    }
+    document.getElementById('outputText').value = result.trim();
+    showToast('✅ Text repeated successfully');
+  }
+
+  function copyText() {
+    const output = document.getElementById('outputText');
+    if (!output.value) { showToast('⚠️ Nothing to copy'); return; }
+    navigator.clipboard.writeText(output.value)
+      .then(() => showToast('📋 Copied to clipboard'))
+      .catch(() => { output.select(); document.execCommand('copy'); showToast('📋 Copied!'); });
+  }
+
+  function shareWhatsApp() {
+    const text = document.getElementById('outputText').value;
+    if (!text.trim()) { showToast('⚠️ Repeat some text first'); return; }
+    const url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text);
+    window.open(url, '_blank');
+  }
+</script>
+
+</body>
+</html>
